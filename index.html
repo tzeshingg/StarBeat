@@ -21,6 +21,35 @@
 }
 </style>
 
+<style> /*日期*/
+#calendar {
+    display: grid;
+    grid-template-columns: repeat(10, 15px); /* 一行 10 个格子 */
+    grid-gap: 4px;
+    justify-content: center; /* 居中排列 */
+
+    position: fixed;
+    top: 410px;
+    left: 40px;
+}
+
+.calendar-day {
+    width: 15px;
+    height: 15px;
+    background-color: #eee; /* 默认浅灰色 */
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+body.dark .calendar-day {
+    background-color: #3f3f3f; /* 夜晚浅灰 */
+}
+
+.calendar-day.updated {
+    background-color: #51c255; /* 更新作品的绿色 */
+}
+</style>
 
 <style>
     :root {
@@ -211,6 +240,8 @@
         <p><br>—— 循此苦旅，以达星辰</p>
     </div>
 
+    <div id="calendar"></div>
+
     <div class="footer">
         <p id="clock"></p>
         <p>© 2026 星跳 | 小站慢慢更新中 🎧</p>
@@ -299,7 +330,36 @@ window.addEventListener("resize", () => {
 });
 </script>
 
-<script>
+<script> //calendar//
+// 生成 30 个格子
+const calendarEl = document.getElementById("calendar");
+for (let i = 1; i <= 30; i++) {
+    const dayDiv = document.createElement("div");
+    dayDiv.classList.add("calendar-day");
+    dayDiv.dataset.day = i;
+    calendarEl.appendChild(dayDiv);
+}
+
+// 读取作品集 JSON，自动更新格子颜色
+// JSON 格式示例: [{ "day": 3, "title": "文章标题", "url": "作品集/文章1.html" }]
+fetch('works.json')
+  .then(res => res.json())
+  .then(data => {
+    data.forEach(work => {
+      const dayDiv = document.querySelector(`.calendar-day[data-day='${work.day}']`);
+      if (dayDiv) {
+        dayDiv.classList.add("updated");
+        dayDiv.title = work.title;
+        dayDiv.onclick = () => {
+          window.location.href = work.url;
+        }
+      }
+    });
+  })
+  .catch(err => console.log("读取作品集出错:", err));
+</script>
+
+<script> //clock//
         function updateClock() {
   const now = new Date();
   const options = { 
