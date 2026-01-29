@@ -180,7 +180,7 @@
   },
   {
     "id": "work-02",
-    "title": "县级诗歌朗诵模板",
+    "title": "诗歌朗诵模板",
     "date": "2026-01-12",
     "images": [
       "https://image2url.com/r2/default/images/1769694781401-468319ed-5303-48b9-8e26-cfb47490c1f1.blob",
@@ -262,6 +262,16 @@
         "https://image2url.com/r2/default/images/1769695693198-57ca771b-2cc7-4bf3-8a47-7b8594e85fc9.blob"
     ]
   },
+{
+    "id": "work-02",
+    "title": "袁一琦-温和冬季",
+    "date": "2026-01-12",
+    "images": [
+        "https://image2url.com/r2/default/images/1769696197032-0c3a17ed-af9b-41b3-9acf-53e9beebea5f.blob",
+        "https://image2url.com/r2/default/images/1769696251539-56f1e588-b934-4bb8-a9af-f0640d5b02a5.blob",
+        "https://image2url.com/r2/default/images/1769696274496-c5d658b8-cf3b-4fb4-9630-795f52ed32a9.blob"
+   ]
+  },
   {
     "id": "work-02",
     "title": "李现-现在见山海",
@@ -270,5 +280,35 @@
         "https://image2url.com/r2/default/images/1769695735435-7beb1859-4733-4b27-81f1-f6e713088709.blob",
         "https://image2url.com/r2/default/images/1769695749130-cd898ee5-23a5-4f25-8b9f-c73e88fa86f2.blob"
     ]
+  },
+  {
+    "id": "work-02",
+    "title": "李现-与蔚蓝奔现",
+    "date": "2026-01-12",
+    "images": [
+        "https://image2url.com/r2/default/images/1769695978884-de0ca322-bba5-4289-8622-da04ffc63e1d.blob",
+        "https://image2url.com/r2/default/images/1769695956171-61933cf4-f39a-40f3-a898-fedf0ecd3876.blob",
+        "https://image2url.com/r2/default/images/1769695937357-440ded1a-4f7e-4287-a8ea-92dd43d2d831.blob",
+        "https://image2url.com/r2/default/images/1769695911700-e14669e5-7dd7-4f72-a51e-6a33e10624ed.blob",
+        "https://image2url.com/r2/default/images/1769695887733-ec6418cb-ee74-48ff-b41b-220816332f00.blob",
+        "https://image2url.com/r2/default/images/1769695869336-d699fce7-3424-4f7e-85f5-8e8aec7b95e3.blob"
+   ]
+  },
+  {
+    "id": "work-02",
+    "title": "李现-2025 代言汇总",
+    "date": "2026-01-12",
+    "images": [
+        "https://image2url.com/r2/default/images/1769696053661-8206a18d-81b7-44fa-af78-a953308847cb.blob"
+   ]
+  },
+  {
+    "id": "work-02",
+    "title": "Max Verstappen 手幅",
+    "date": "2026-01-12",
+    "images": [
+        "https://image2url.com/r2/default/images/1769696290498-bec5fa78-f1ad-47f3-8296-1ac2bb5007b1.blob",
+        "https://image2url.com/r2/default/images/1769696309806-32b383f3-5ebf-4dea-9206-bd172fded2c1.blob"
+   ]
   }
 ]
