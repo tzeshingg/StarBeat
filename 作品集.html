@@ -47,14 +47,15 @@
         --card-color:#272727;
     }
 
-    @font-face {
-        font-family: "Northwell";
-        src: url("fonts/Northwell.woff2")format("woff2");
-        src: url("fonts/Northwell.woff") format("woff");
-        font-weight: normal;
-        font-style: normal;
-        font-display: swap;
-    }
+@font-face {
+    font-family: "northwell";
+    src: url("fonts/northwell.woff2") format("woff2"),
+         url("fonts/northwell.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+    
 </style>
 
 <style> /*NavBar*/
@@ -360,18 +361,31 @@ body.dark .work-card {
   });
 </script>
 
-<script> //白天黑夜//
-  const toggle = document.querySelector('.theme');
+<script> // 白天黑夜模式
+const toggle = document.querySelector('.theme');
 
-  toggle.onclick = () => {
+// 页面加载时检查 localStorage
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'dark') {
+    document.body.classList.add('dark');
+    toggle.textContent = '☀️';
+} else {
+    document.body.classList.remove('dark');
+    toggle.textContent = '🌙';
+}
+
+// 点击切换主题
+toggle.onclick = () => {
     document.body.classList.toggle('dark');
 
     if (document.body.classList.contains('dark')) {
-      toggle.textContent = '☀️';
+        toggle.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');  // 保存状态
     } else {
-      toggle.textContent = '🌙';
+        toggle.textContent = '🌙';
+        localStorage.setItem('theme', 'light'); // 保存状态
     }
-  };
+};
 </script>
 
 <script> //背景特效//
