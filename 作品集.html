@@ -1,11 +1,425 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>作品集</title>
+    <link rel="icon" href="https://i.postimg.cc/PrwR3qd6/photo-6311810597796301602-x.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
 </head>
-<body>
+
+<style> /* 背景特效*/
+#bgCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    pointer-events: none; /* 不挡住点击 */
+    z-index: -1;
+    background: transparent;
+}
+</style>
+
+<style> /*初始设定*/
+        :root {
+        --bg-color: white;
+        --text-color:black ;
+        --navbar-bg: white ;
+        --shadow-color: rgba(219,219,219);
+        --portfolio-color: rgb(243, 243, 243) ;
+    }
+
+    body{
+        padding-top: 80px;
+        font-family: 'Noto Serif SC', serif;
+        background:var(--bg-color);
+        color: var(--text-color);
+    }
+
+    body.dark{
+        --bg-color:#0f0f0f;
+        --text-color:#f1f1f1;
+        --navbar-bg:#181818;
+        --shadow-color: rgba(0,0,0,0.6);
+        --portfolio-color: #141414 ;
+    }
+</style>
+
+<style> /*NavBar*/
+        .navbar {
+        width: 100%;
+        height: 80px;
+        background: var(--navbar-bg);
+        box-shadow: 0 2px 10px var(--shadow-color);
+
+        position: fixed;
+        top: 0;
+        left: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        }
     
+    .navbar a {
+        margin: 0;
+        padding-left: 20px;
+        line-height: 80px;
+        font-weight: bold;
+        font-size: 150%;
+        
+        text-decoration: none;
+        color: var(--text-color);
+    }
+
+    .navbar img {
+        width: 45px;
+        padding-left: 0%;
+    }
+
+    .menu {
+        margin-left: 130px;
+        font-size: 150%;
+        }
+
+    .theme {
+        margin-left: 30px;
+    }
+
+    .menu-toggle {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        top: 80px;
+        right: 0;
+        width: 100%;
+        height: 140px;
+        background-color: var(--bg-color);
+        box-shadow: 0 2px 10px var(--shadow-color);
+
+        align-items: center;
+        justify-content: center;
+    }
+
+    .menu-toggle ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .menu-toggle a {
+        text-decoration: none;
+        color:var(--text-color);
+        font-size: large;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 15px;
+    }
+
+</style>
+
+<style> /*content*/
+    .content h1 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        color: var(--text-color);
+    }
+
+    .content p {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        color: var(--text-color);
+    }
+</style>
+
+<style> /*portfolio*/
+    .portfolio {
+    width: 100%;
+    background-color: var(--portfolio-color);
+    padding: 60px 6vw;
+    box-sizing: border-box;
+}
+
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 一行最多两个 */
+  gap: 32px;
+}
+
+.work-card {
+  background: var(--bg-color);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+
+body.dark .work-card {
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+}
+
+.work-slider {
+  display: flex;
+}
+
+.work-slider img {
+  width: 100%;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  object-fit: cover;
+}
+
+.work-info {
+  padding: 16px;
+  font-size: 15px;
+  text-align: center;
+  opacity: 0.85;
+}
+
+.photo-count {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.55);
+  color: white;
+}
+
+.work-card {
+  position: relative;
+}
+</style>
+
+<style>
+    .viewer {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+}
+
+.viewer img {
+  max-width: 90%;
+  max-height: 90%;
+}
+
+.viewer .close {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  font-size: 30px;
+  color: white;
+  cursor: pointer;
+}
+
+.viewer .nav {
+  position: absolute;
+  top: 50%;
+  font-size: 40px;
+  color: white;
+  cursor: pointer;
+  user-select: none;
+}
+
+.viewer .prev { left: 30px; }
+.viewer .next { right: 30px; }
+
+.hidden {
+  display: none;
+}
+</style>
+
+<body>
+        <canvas id="bgCanvas"></canvas>
+
+    <div class="navbar"> 
+        <a href="index.html"><b>StarBeat</b></a>
+        <img src="https://i.postimg.cc/3w03jGKY/photo-6311810597796301602-x-removebg-preview.png" class="logo-img">
+        <div class="menu">☰</div>
+        <div class="theme">🌙</div>
+    </div>
+
+    <div class="menu-toggle">
+        <ul>
+            <li><a href="index.html">首页</a></li>
+            <li><a href="作品集.html">作品集</a></li>
+            <li><a href="工委随记.html">工委随记</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <h1>作品集</h1>
+        <h1>Portfolio</h1>
+        <p><br>展示我的设计作品 慢慢成长中...</p>
+    </div>
+
+<div class="portfolio">
+  <div class="portfolio-grid" id="portfolioGrid"></div>
+</div>
+
+<div id="viewer" class="viewer hidden">
+  <span class="close">×</span>
+  <img id="viewerImg">
+  <span class="nav prev">‹</span>
+  <span class="nav next">›</span>
+</div>
+
+
+
 </body>
+
+<script> //菜单//
+  // 获取 ☰ 按钮和菜单内容
+  const toggleBtn = document.querySelector('.menu');         // ☰ 按钮
+  const menuContent = document.querySelector('.menu-toggle'); // 菜单内容
+
+  // 点击按钮切换显示
+  toggleBtn.addEventListener('click', () => {
+    if (menuContent.style.display === 'flex') {
+      menuContent.style.display = 'none';  // 隐藏菜单
+    } else {
+      menuContent.style.display = 'flex';  // 显示菜单
+    }
+  });
+</script>
+
+<script> //白天黑夜//
+  const toggle = document.querySelector('.theme');
+
+  toggle.onclick = () => {
+    document.body.classList.toggle('dark');
+
+    if (document.body.classList.contains('dark')) {
+      toggle.textContent = '☀️';
+    } else {
+      toggle.textContent = '🌙';
+    }
+  };
+</script>
+
+<script> //背景特效//
+const canvas = document.getElementById("bgCanvas");
+const ctx = canvas.getContext("2d");
+let w = window.innerWidth;
+let h = window.innerHeight;
+canvas.width = w;
+canvas.height = h;
+
+const STAR_COUNT = 30; // 点点数量少一点
+const stars = [];
+
+// 初始化
+for (let i = 0; i < STAR_COUNT; i++) {
+  stars.push({
+    x: Math.random() * w,
+    y: Math.random() * h,
+    r: Math.random() * 0.8 + 0.3, // 半径更小
+    dy: Math.random() * 0.3 + 0.1 // 下落速度更慢
+  });
+}
+
+function draw() {
+  const isDark = document.body.classList.contains("dark");
+  ctx.fillStyle = isDark ? "#0f0f0f" : "#ffffff"; // 白天纯白
+  ctx.fillRect(0, 0, w, h);
+
+  ctx.fillStyle = "rgba(255,255,255,0.7)"; // 点点颜色统一白色
+  ctx.beginPath();
+  for (let s of stars) {
+    ctx.moveTo(s.x, s.y);
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+    s.y += s.dy;
+    if (s.y > h) {
+      s.y = 0;
+      s.x = Math.random() * w;
+    }
+  }
+  ctx.fill();
+
+  requestAnimationFrame(draw);
+}
+
+draw();
+
+window.addEventListener("resize", () => {
+  w = window.innerWidth;
+  h = window.innerHeight;
+  canvas.width = w;
+  canvas.height = h;
+});
+</script>
+
+<script>
+let currentImages = [];
+let currentIndex = 0;
+
+const viewer = document.getElementById('viewer');
+const viewerImg = document.getElementById('viewerImg');
+
+document.querySelector('.close').onclick = () => {
+  viewer.classList.add('hidden');
+};
+
+document.querySelector('.prev').onclick = () => {
+  currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
+  viewerImg.src = currentImages[currentIndex];
+};
+
+document.querySelector('.next').onclick = () => {
+  currentIndex = (currentIndex + 1) % currentImages.length;
+  viewerImg.src = currentImages[currentIndex];
+};
+
+fetch('works.json')
+  .then(res => res.json())
+  .then(works => {
+    const grid = document.getElementById('portfolioGrid');
+
+    works.forEach(work => {
+      const card = document.createElement('div');
+      card.className = 'work-card';
+
+      const slider = document.createElement('div');
+      slider.className = 'work-slider';
+
+      const img = document.createElement('img');
+      img.src = work.images[0]; // 只显示第一张
+      slider.appendChild(img);
+
+      const count = document.createElement('span');
+      count.className = 'photo-count';
+      count.textContent = work.images.length;
+
+      const info = document.createElement('div');
+      info.className = 'work-info';
+      info.textContent = work.title;
+
+      card.appendChild(slider);
+      card.appendChild(count);
+      card.appendChild(info);
+      grid.appendChild(card);
+
+      // 点击 → 打开放大查看
+      card.onclick = () => {
+        currentImages = work.images;
+        currentIndex = 0;
+        viewerImg.src = currentImages[0];
+        viewer.classList.remove('hidden');
+      };
+    });
+  });
+</script>
+
+
 </html>
