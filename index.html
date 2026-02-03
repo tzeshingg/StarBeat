@@ -79,10 +79,12 @@ body.dark .calendar-day {
         height: 80px;
         background: var(--navbar-bg);
         box-shadow: 0 2px 10px var(--shadow-color);
-
+ 
         position: fixed;
         top: 0;
         left: 0;
+
+        z-index: 10000;
 
         display: flex;
         align-items: center;
@@ -264,18 +266,31 @@ body.dark .calendar-day {
   });
 </script>
 
-<script> //白天黑夜//
-  const toggle = document.querySelector('.theme');
+<script> // 白天黑夜模式
+const toggle = document.querySelector('.theme');
 
-  toggle.onclick = () => {
+// 页面加载时检查 localStorage
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'dark') {
+    document.body.classList.add('dark');
+    toggle.textContent = '☀️';
+} else {
+    document.body.classList.remove('dark');
+    toggle.textContent = '🌙';
+}
+
+// 点击切换主题
+toggle.onclick = () => {
     document.body.classList.toggle('dark');
 
     if (document.body.classList.contains('dark')) {
-      toggle.textContent = '☀️';
+        toggle.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');  // 保存状态
     } else {
-      toggle.textContent = '🌙';
+        toggle.textContent = '🌙';
+        localStorage.setItem('theme', 'light'); // 保存状态
     }
-  };
+};
 </script>
 
 <script> //背景特效//
@@ -331,32 +346,34 @@ window.addEventListener("resize", () => {
 </script>
 
 <script> //calendar//
-// 生成 30 个格子
 const calendarEl = document.getElementById("calendar");
-for (let i = 1; i <= 30; i++) {
-    const dayDiv = document.createElement("div");
-    dayDiv.classList.add("calendar-day");
-    dayDiv.dataset.day = i;
-    calendarEl.appendChild(dayDiv);
+const year = 2026;
+const month = 1; // 1 月
+
+for (let d = 1; d <= 30; d++) {
+  const div = document.createElement("div");
+  div.className = "calendar-day";
+  div.dataset.date = `${year}-${String(month).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  calendarEl.appendChild(div);
 }
 
-// 读取作品集 JSON，自动更新格子颜色
-// JSON 格式示例: [{ "day": 3, "title": "文章标题", "url": "作品集/文章1.html" }]
 fetch('works.json')
   .then(res => res.json())
-  .then(data => {
-    data.forEach(work => {
-      const dayDiv = document.querySelector(`.calendar-day[data-day='${work.day}']`);
-      if (dayDiv) {
-        dayDiv.classList.add("updated");
-        dayDiv.title = work.title;
-        dayDiv.onclick = () => {
-          window.location.href = work.url;
-        }
+  .then(works => {
+    works.forEach(work => {
+      const cell = document.querySelector(
+        `.calendar-day[data-date='${work.date}']`
+      );
+      if (cell) {
+        cell.classList.add("updated");
+        cell.title = work.title;
+        cell.onclick = () => {
+          window.location.href = "作品集.html";
+        };
       }
     });
-  })
-  .catch(err => console.log("读取作品集出错:", err));
+  });
+
 </script>
 
 <script> //clock//
