@@ -299,6 +299,45 @@ body.dark .work-card {
     }
 </style>
 
+<style>
+  /* 上方文字滑出动画 */
+.slide-up {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: slideUp 0.8s forwards;
+}
+
+/* 延迟不同元素 */
+.slide-up.delay-1 { animation-delay: 0.2s; }
+.slide-up.delay-2 { animation-delay: 0.4s; }
+.slide-up.delay-3 { animation-delay: 0.6s; }
+
+@keyframes slideUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+</style>
+
+<style>
+  /* 初始状态：下方偏移 + 透明 */
+.slide-up-on-scroll {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 0.6s ease-out;
+}
+
+/* 滑出后状态 */
+.slide-up-on-scroll.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+</style>
+
+
 <body>
     <canvas id="bgCanvas"></canvas>
 
@@ -317,11 +356,11 @@ body.dark .work-card {
         </ul>
     </div>
 
-    <div class="content">
-        <h1>作品集</h1>
-        <p class="h1portfolio">Portfolio</p>
-        <p class="pportfolio">不完美，却正在成长的设计...</p>
-    </div>
+<div class="content">
+    <h1 class="slide-up delay-1">作品集</h1>
+    <p class="h1portfolio slide-up delay-2">Portfolio</p>
+    <p class="pportfolio slide-up delay-3">不完美，却正在成长的设计...</p>
+</div>
 
     <div class="portfolio">
         <div class="portfolio-grid" id="portfolioGrid"></div>
@@ -339,6 +378,8 @@ body.dark .work-card {
         <p id="clock"></p>
         <p>© 2026 星跳 | 小站慢慢更新中 🎧</p>   
       </div>
+
+      
 </body>
 
 <script> //菜单//
@@ -456,6 +497,17 @@ document.querySelector('.next').onclick = () => {
   viewerImg.src = currentImages[currentIndex];
 };
 
+// ⭐ 滚动滑出观察器（手机电脑都稳定）
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('show');
+    }
+  });
+}, {
+  threshold: 0.15
+});
+
 fetch('works.json')
   .then(res => res.json())
   .then(works => {
@@ -463,13 +515,13 @@ fetch('works.json')
 
     works.forEach(work => {
       const card = document.createElement('div');
-      card.className = 'work-card';
+      card.className = 'work-card slide-up-on-scroll';
 
       const slider = document.createElement('div');
       slider.className = 'work-slider';
 
       const img = document.createElement('img');
-      img.src = work.images[0]; // 只显示第一张
+      img.src = work.images[0];
       slider.appendChild(img);
 
       const count = document.createElement('span');
@@ -485,7 +537,10 @@ fetch('works.json')
       card.appendChild(info);
       grid.appendChild(card);
 
-      // 点击 → 打开放大查看
+      // ⭐ 关键：让每张卡片被观察
+      observer.observe(card);
+
+      // 点击查看
       card.onclick = () => {
         currentImages = work.images;
         currentIndex = 0;
@@ -494,7 +549,9 @@ fetch('works.json')
       };
     });
   });
-  let startX = 0;
+
+/* ===== 手机滑动切换图片 ===== */
+let startX = 0;
 let endX = 0;
 
 viewer.addEventListener('touchstart', (e) => {
@@ -509,19 +566,16 @@ viewer.addEventListener('touchend', (e) => {
 function handleSwipe() {
   const diff = startX - endX;
 
-  // 向左滑 → 下一张
   if (diff > 50) {
     currentIndex = (currentIndex + 1) % currentImages.length;
     viewerImg.src = currentImages[currentIndex];
   }
 
-  // 向右滑 → 上一张
   if (diff < -50) {
     currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
     viewerImg.src = currentImages[currentIndex];
   }
 }
-
 </script>
 
 <script> //clock//
@@ -543,5 +597,25 @@ setInterval(updateClock, 1000);
 updateClock(); // 初始立即运行
 </script>
 
+<script>
+  // 监听页面滚动
+function handleScrollAnimations() {
+  const elements = document.querySelectorAll('.work-card'); // 你的卡片
+  const windowBottom = window.innerHeight + window.scrollY;
+
+  elements.forEach(el => {
+    const elTop = el.getBoundingClientRect().top + window.scrollY;
+    if (windowBottom > elTop + 50) { // 提前 50px 就触发
+      el.classList.add('show');
+    }
+  });
+}
+
+// 页面滚动触发
+window.addEventListener('scroll', handleScrollAnimations);
+// 初始检查一次
+window.addEventListener('load', handleScrollAnimations);
+
+</script>
 
 </html>
